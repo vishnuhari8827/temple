@@ -1,0 +1,642 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 17rem minmax(0, 1fr);
+  background: #3a120c;
+}
+
+.side {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.15rem 0.8rem 0.85rem;
+  background: linear-gradient(180deg, #5a1522 0%, #2c0b12 72%);
+  color: var(--ivory);
+}
+
+.brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.15rem 0.4rem 0.85rem;
+}
+
+.mark,
+.avatar,
+.stat-icon,
+.icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.mark {
+  width: 2.45rem;
+  height: 2.45rem;
+  border-radius: 0.75rem;
+  background: rgba(214, 163, 26, 0.18);
+  color: var(--mustard);
+}
+
+.mark svg,
+.avatar svg,
+.signout svg,
+nav svg,
+.top svg,
+.icon svg,
+.stat-icon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mark svg {
+  width: 1.45rem;
+  height: 1.45rem;
+  fill: currentColor;
+  stroke: none;
+}
+
+.temple,
+.place,
+.system {
+  margin: 0;
+}
+
+.temple,
+.place {
+  font-family: var(--malayalam);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.temple {
+  color: var(--mustard);
+  font-size: 0.98rem;
+}
+
+.place {
+  margin-top: 0.1rem;
+  color: #f3e0b0;
+  font-size: 0.82rem;
+}
+
+.system {
+  margin-top: 0.2rem;
+  color: rgba(251, 246, 234, 0.72);
+  font-size: 0.72rem;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+nav button,
+.task,
+.signout,
+.ledger-head button {
+  cursor: pointer;
+}
+
+nav button {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border: 0;
+  border-radius: 0.8rem;
+  background: transparent;
+  color: rgba(251, 246, 234, 0.88);
+  padding: 0.72rem 0.75rem;
+  text-align: left;
+  font-weight: 500;
+}
+
+nav button.active,
+nav button:hover {
+  background: rgba(214, 163, 26, 0.2);
+  color: var(--ivory);
+}
+
+.side-art {
+  height: 6.5rem;
+  margin: 0.4rem 0.35rem 0;
+  border-radius: 0.8rem;
+  background:
+    linear-gradient(180deg, transparent, rgba(44, 11, 18, 0.55)),
+    url('/temple-entrance.jpg') center 62% / cover no-repeat;
+  opacity: 0.55;
+}
+
+.staff {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding: 0.85rem 0.35rem 0.15rem;
+  border-top: 1px solid rgba(214, 163, 26, 0.28);
+}
+
+.avatar {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: rgba(214, 163, 26, 0.18);
+  color: var(--mustard);
+}
+
+.staff strong,
+.staff span {
+  display: block;
+}
+
+.staff strong {
+  font-size: 0.92rem;
+}
+
+.staff span {
+  color: rgba(251, 246, 234, 0.72);
+  font-size: 0.72rem;
+}
+
+.signout {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: var(--mustard);
+  padding: 0.35rem;
+}
+
+.main {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  min-height: 100dvh;
+}
+
+.main::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -1.75rem;
+  background:
+    linear-gradient(165deg, rgba(255, 220, 170, 0.58), rgba(110, 42, 20, 0.46)),
+    url('/temple-entrance.jpg') center / cover no-repeat;
+  filter: blur(8px);
+}
+
+.top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.95rem 1.35rem 0.35rem;
+  color: #000;
+  font-weight: 600;
+}
+
+.top svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.35rem 1.25rem 1.5rem;
+}
+
+.day-head h1,
+.panel h1,
+.summary h2,
+.ledger h2,
+.desk h2,
+.panchangam h2 {
+  margin: 0;
+  color: #000;
+}
+
+.day-head h1 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.35rem);
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.day-head p,
+.panel p,
+.stat-label,
+.quiet {
+  color: #000;
+}
+
+.day-head p {
+  margin: 0.35rem 0 0;
+}
+
+.panchangam {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  border: 1px solid rgba(255, 214, 156, 0.55);
+  border-radius: 1.1rem;
+  background:
+    linear-gradient(100deg, rgba(90, 21, 34, 0.88), rgba(176, 92, 36, 0.72)),
+    url('/temple-entrance.jpg') center 30% / cover no-repeat;
+  padding: 1.15rem 1.3rem;
+  color: var(--ivory);
+}
+
+.panchangam p,
+.panchangam h2,
+.panchangam dt,
+.panchangam dd {
+  color: var(--ivory);
+}
+
+.panchangam p {
+  margin: 0;
+  font-family: var(--malayalam);
+  font-size: 0.92rem;
+}
+
+.panchangam h2 {
+  margin-top: 0.2rem;
+  font-family: var(--malayalam);
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 600;
+}
+
+.panchangam dl {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0;
+}
+
+.panchangam dt,
+.panchangam dd {
+  margin: 0;
+  font-family: var(--malayalam);
+}
+
+.panchangam dt {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.panchangam dd {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.main-poojas h2,
+.main-card h3,
+.main-card dt,
+.main-card dd {
+  margin: 0;
+  color: #000;
+}
+
+.main-poojas h2 {
+  font-size: 1.05rem;
+}
+
+.main-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.55rem;
+}
+
+.main-card {
+  border: 2px solid var(--mustard);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, #fffdf8, rgba(214, 163, 26, 0.34));
+  box-shadow: 0 8px 18px rgba(69, 16, 24, 0.12);
+  padding: 0.85rem 0.95rem;
+}
+
+.main-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.main-card h3 {
+  font-family: var(--serif);
+  font-size: 1.28rem;
+}
+
+.main-card dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 0.7rem;
+  margin: 0.7rem 0 0;
+}
+
+.main-card dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.main-card dd {
+  margin-top: 0.08rem;
+  font-weight: 600;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 0.75rem;
+}
+
+.desk {
+  border: 1px solid rgba(255, 214, 156, 0.5);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 236, 214, 0.52), rgba(168, 98, 48, 0.36));
+  backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 204, 0.42);
+  padding: 0.9rem 1rem 1rem;
+}
+
+.desk h2 {
+  font-size: 1.05rem;
+}
+
+.desk ol,
+.desk ul {
+  margin: 0.65rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.desk li {
+  display: grid;
+  gap: 0.1rem;
+  margin-top: 0.55rem;
+  color: #000;
+}
+
+.desk ol li {
+  grid-template-columns: 5.2rem minmax(0, 1fr);
+  gap: 0.65rem;
+  align-items: baseline;
+}
+
+.desk time,
+.desk li span {
+  font-size: 0.84rem;
+}
+
+.desk strong {
+  display: block;
+  font-weight: 600;
+}
+
+.quiet {
+  margin: 0.7rem 0 0;
+}
+
+.today-bookings {
+  padding-bottom: 0.85rem;
+}
+
+.pay {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  background: rgba(255, 244, 220, 0.72);
+  color: #000;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.pay.unpaid {
+  background: rgba(107, 26, 42, 0.16);
+}
+
+.pay.advance {
+  background: rgba(214, 163, 26, 0.35);
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: auto repeat(4, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.75rem 1rem;
+  border: 1px solid rgba(255, 214, 156, 0.5);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 220, 168, 0.48), rgba(158, 86, 36, 0.34));
+  backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 204, 0.4);
+  padding: 0.95rem 1.1rem;
+}
+
+.summary h2 {
+  font-size: 1.02rem;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.stat.link {
+  cursor: pointer;
+}
+
+.stat-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: rgba(255, 236, 210, 0.4);
+  color: var(--maroon);
+}
+
+.stat-label,
+.staff span,
+.system {
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+}
+
+.stat strong {
+  color: #000;
+  font-size: 1.15rem;
+}
+
+.ledger,
+.panel {
+  border: 1px solid rgba(255, 214, 156, 0.5);
+  border-radius: 1rem;
+  background: linear-gradient(180deg, rgba(255, 236, 214, 0.52), rgba(168, 98, 48, 0.36));
+  backdrop-filter: blur(16px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 204, 0.42);
+}
+
+.ledger {
+  padding: 0.85rem 1rem 0.35rem;
+}
+
+.ledger-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ledger h2 {
+  font-size: 1.05rem;
+}
+
+.ledger-head button {
+  border: 0;
+  background: transparent;
+  color: #000;
+  font-weight: 600;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.35rem;
+}
+
+th,
+td {
+  padding: 0.7rem 0.4rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: #000;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(125, 90, 50, 0.18);
+}
+
+td {
+  color: #000;
+  border-bottom: 1px solid rgba(125, 90, 50, 0.1);
+  font-size: 0.9rem;
+}
+
+.panel {
+  padding: 1.4rem 1.35rem 1.5rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.panel h1 {
+  margin-top: 0.25rem;
+  font-family: var(--serif);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 600;
+}
+
+.panel p {
+  max-width: 32rem;
+  margin: 0.45rem 0 0;
+  font-size: 1.02rem;
+}
+
+@media (max-width: 1100px) {
+  .board,
+  .main-row,
+  .summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .summary h2 {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 860px) {
+  .shell {
+    display: block;
+  }
+
+  .side {
+    position: static;
+    height: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.35rem 0.5rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .brand {
+    padding-bottom: 0.2rem;
+  }
+
+  nav {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  nav button {
+    white-space: nowrap;
+  }
+
+  .side-art {
+    display: none;
+  }
+
+  .staff {
+    margin: 0;
+    border: 0;
+    padding: 0.2rem 0 0;
+  }
+
+  .board,
+  .main-row,
+  .summary,
+  .panchangam,
+  .panchangam dl {
+    grid-template-columns: 1fr;
+    display: grid;
+  }
+
+  .panchangam dl {
+    gap: 0.7rem;
+  }
+
+  th,
+  td {
+    white-space: normal;
+  }
+}

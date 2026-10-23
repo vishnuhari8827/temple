@@ -1,0 +1,326 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.screen {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(22rem, 0.85fr);
+  background:
+    linear-gradient(100deg, rgba(32, 8, 14, 0.62) 0%, rgba(32, 8, 14, 0.12) 46%, rgba(32, 8, 14, 0.28) 100%),
+    url('/temple-entrance.jpg') center / cover no-repeat;
+}
+
+.story {
+  position: relative;
+  overflow: hidden;
+  color: var(--ivory);
+  display: flex;
+  align-items: flex-start;
+  padding: clamp(2rem, 6vh, 4.5rem) clamp(1.5rem, 4vw, 4rem);
+  background: linear-gradient(180deg, rgba(32, 8, 14, 0.5), transparent 58%);
+}
+
+.story-inner {
+  position: relative;
+  max-width: 28rem;
+}
+
+.brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  margin: 0 0 1.5rem;
+  font-family: var(--malayalam);
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--mustard);
+}
+
+.brand svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.28rem;
+  color: var(--mustard);
+}
+
+.story h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 4vw, 3.35rem);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--ivory);
+  text-shadow: 0 10px 28px rgba(32, 8, 14, 0.45);
+}
+
+.lede {
+  margin: 1rem 0 0;
+  max-width: 26rem;
+  color: #f3e6cf;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.clock {
+  margin: 1.4rem 0 0;
+}
+
+.clock time {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border: 1px solid var(--mustard);
+  border-radius: 1rem;
+  background: rgba(214, 163, 26, 0.12);
+  padding: 0.7rem 0.95rem 0.75rem;
+}
+
+.clock-time {
+  color: var(--ivory);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.clock-date {
+  color: var(--mustard);
+  font-size: 0.88rem;
+}
+
+.form-wrap {
+  display: grid;
+  place-items: center;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.card {
+  width: min(100%, 26rem);
+  background: linear-gradient(180deg, rgba(255, 214, 156, 0.46), rgba(168, 86, 38, 0.4));
+  backdrop-filter: blur(18px) saturate(1.25);
+  border: 1px solid rgba(255, 214, 156, 0.55);
+  border-radius: 1.25rem;
+  padding: 1.6rem 1.4rem 1.25rem;
+  box-shadow:
+    0 18px 40px rgba(48, 16, 8, 0.28),
+    inset 0 1px 0 rgba(255, 236, 204, 0.5);
+}
+
+.eyebrow {
+  margin: 0 0 1.25rem;
+  color: var(--mustard-deep);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.field-error,
+.banner {
+  line-height: 1.45;
+}
+
+.banner {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.8rem;
+  background: #f6e4dc;
+  color: var(--danger);
+  border: 1px solid rgba(143, 29, 50, 0.18);
+}
+
+.field {
+  margin-bottom: 0.95rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--maroon-deep);
+}
+
+.menu {
+  position: relative;
+}
+
+.menu-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid rgba(120, 68, 28, 0.38);
+  border-radius: 0.8rem;
+  background: rgba(255, 244, 224, 0.72);
+  color: var(--ink);
+  padding: 0.85rem 0.95rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-trigger.placeholder {
+  color: var(--sandal-deep);
+}
+
+.menu-trigger svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  color: var(--maroon);
+  transition: transform 0.15s ease;
+}
+
+.menu-trigger svg.open {
+  transform: rotate(180deg);
+}
+
+.menu-trigger[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.menu-list {
+  position: absolute;
+  z-index: 2;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.35rem;
+  list-style: none;
+  background: rgba(255, 236, 210, 0.92);
+  border: 1px solid rgba(120, 68, 28, 0.35);
+  border-radius: 0.8rem;
+  box-shadow: 0 12px 28px rgba(69, 16, 24, 0.14);
+}
+
+.menu-list button {
+  width: 100%;
+  border: 0;
+  border-radius: 0.55rem;
+  background: transparent;
+  color: var(--maroon-deep);
+  padding: 0.7rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu-list button:hover,
+.menu-list button[aria-selected='true'] {
+  background: rgba(214, 163, 26, 0.24);
+}
+
+input[type='password'],
+input[type='text'] {
+  width: 100%;
+  border: 1px solid rgba(120, 68, 28, 0.38);
+  border-radius: 0.8rem;
+  background: rgba(255, 244, 224, 0.72);
+  color: var(--ink);
+  padding: 0.85rem 0.95rem;
+}
+
+input::placeholder {
+  color: rgba(90, 48, 24, 0.72);
+}
+
+input:focus {
+  outline: 2px solid var(--mustard);
+  border-color: transparent;
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--danger);
+}
+
+.password {
+  position: relative;
+}
+
+.password input {
+  padding-right: 4.5rem;
+}
+
+.ghost,
+.submit {
+  cursor: pointer;
+}
+
+.ghost {
+  position: absolute;
+  top: 50%;
+  right: 0.45rem;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--maroon);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.field-error {
+  margin: 0.35rem 0 0;
+  color: var(--danger);
+  font-size: 0.82rem;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.3rem 0 1.15rem;
+  font-weight: 500;
+  color: var(--maroon-deep);
+}
+
+.remember input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--maroon);
+}
+
+.submit {
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  background: var(--mustard);
+  color: var(--maroon-deep);
+  padding: 0.9rem 1rem;
+  font-weight: 600;
+}
+
+.submit:hover:not(:disabled) {
+  background: #c49212;
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+@media (max-width: 860px) {
+  .screen {
+    grid-template-columns: 1fr;
+    background-position: center top;
+  }
+
+  .story {
+    min-height: auto;
+    align-items: flex-start;
+    padding: 1.5rem 1.25rem 1.35rem;
+  }
+
+  .story h1 {
+    font-size: 2.15rem;
+  }
+
+  .form-wrap {
+    padding: 1.25rem 1.1rem 2rem;
+    place-items: start center;
+  }
+}

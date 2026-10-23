@@ -1,0 +1,452 @@
+@if (bookingOpen()) {
+  <form class="sheet" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="sheet-head">
+      <div>
+        <p class="eyebrow">{{ counterText() }}</p>
+        <h1>Book a pooja</h1>
+      </div>
+      <button type="button" class="ghost" (click)="closeForm()">Back</button>
+    </div>
+
+    <section class="almanac" lang="ml" aria-label="മലയാളം പഞ്ചാംഗം">
+      <div class="almanac-head">
+        <button type="button" class="ghost slim" (click)="shiftMonth(-1)">Previous month</button>
+        <div>
+          <h2>{{ monthTitle() }}</h2>
+          <p>{{ malayalamMonths() }}</p>
+        </div>
+        <button type="button" class="ghost slim" (click)="shiftMonth(1)">Next month</button>
+      </div>
+      <p class="almanac-note">Special days are marked. Choose one to book the vazhipad.</p>
+      <div class="weekdays" aria-hidden="true">
+        @for (name of weekdays; track name) {
+          <span>{{ name }}</span>
+        }
+      </div>
+      <div class="days">
+        @for (cell of calendar(); track cell.iso) {
+          <button
+            type="button"
+            class="day"
+            [class.special]="cell.special"
+            [class.picked]="cell.iso === chosenDate()"
+            [class.outside]="cell.outside"
+            [class.today]="cell.today"
+            [attr.aria-pressed]="cell.iso === chosenDate()"
+            [attr.aria-label]="cell.label"
+            (click)="pickDay(cell.iso)"
+          >
+            <span class="num">{{ cell.civil }}</span>
+            <small>{{ cell.line }}</small>
+            <small>{{ cell.nakshatra }}</small>
+            @if (cell.special) {
+              <small class="mark">{{ cell.marks }}</small>
+            }
+          </button>
+        }
+      </div>
+      @if (chosenDay()) {
+        <p class="chosen">{{ chosenDay() }}</p>
+      }
+      @if (errorFor('date'); as message) {
+        <span class="error">{{ message }}</span>
+      }
+    </section>
+
+    <div class="columns">
+      <fieldset>
+        <legend>Devotee</legend>
+        <label>
+          Name
+          <input formControlName="devotee" type="text" placeholder="Devotee name" />
+          @if (errorFor('devotee'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        <label>
+          Mobile
+          <input formControlName="mobile" type="tel" inputmode="numeric" placeholder="10-digit mobile" />
+          @if (errorFor('mobile'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        @if (historyPhone().length === 10) {
+          <section class="history" aria-label="Vazhipadu history">
+            <p>Vazhipadu history</p>
+            @if (vazhipaduHistory().length) {
+              <ul>
+                @for (item of vazhipaduHistory(); track item.id) {
+                  <li>
+                    <strong>{{ item.pooja }}</strong>
+                    <span>{{ item.devotee }}{{ item.star ? ' · ' + item.star : '' }}</span>
+                    <span>{{ item.date }} · {{ item.detail }}</span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="history-empty">No vazhipadu history for this number.</p>
+            }
+          </section>
+        }
+        <label>
+          Star
+          <select formControlName="star">
+            <option value="">Select</option>
+            @for (star of stars; track star) {
+              <option [value]="star">{{ star }}</option>
+            }
+          </select>
+        </label>
+        @if (form.controls.pooja.value === 'Vazhipadu') {
+          <div class="kind" role="group" aria-label="Vazhipadu offering">
+            <button
+              type="button"
+              [class.on]="form.controls.offeringKind.value === 'Individual'"
+              (click)="setKind('Individual')"
+            >
+              Individual
+            </button>
+            <button
+              type="button"
+              [class.on]="form.controls.offeringKind.value === 'Shared'"
+              (click)="setKind('Shared')"
+            >
+              Shared
+            </button>
+          </div>
+        }
+        @if (sharedOffering()) {
+          <div class="shares" formArrayName="shares">
+            @for (share of shares.controls; track $index; let i = $index) {
+              <div class="share" [formGroupName]="i">
+                <input formControlName="name" type="text" placeholder="Name" />
+                <select formControlName="star">
+                  <option value="">Star</option>
+                  @for (star of stars; track star) {
+                    <option [value]="star">{{ star }}</option>
+                  }
+                </select>
+                <button type="button" (click)="removeShareRow(i)" [disabled]="shares.length <= 2">Remove</button>
+              </div>
+            }
+            <button type="button" class="ghost slim" (click)="addShareRow()">Add another name</button>
+            @if (errorFor('shares'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </div>
+        } @else {
+          <label>
+            In the name of
+            <input formControlName="offeringName" type="text" placeholder="Name for the offering" />
+          </label>
+        }
+      </fieldset>
+
+      <fieldset>
+        <legend>Advance booking</legend>
+        <label>
+          Vazhipad
+          <select formControlName="pooja">
+            <option value="">Select</option>
+            @for (vazhipad of vazhipads; track vazhipad.name) {
+              <option [value]="vazhipad.name">{{ vazhipad.name }}</option>
+            }
+          </select>
+          @if (errorFor('pooja'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        <label>
+          Time
+          <input formControlName="time" type="time" />
+          @if (errorFor('time'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        @if (sharedOffering()) {
+          <label>
+            Share amount
+            <input formControlName="sharePrice" type="number" min="1" />
+            @if (errorFor('sharePrice'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+          @if (shareSummary()) {
+            <p class="balance">{{ shareSummary() }}</p>
+          }
+        }
+        <label>
+          Pooja amount
+          <input formControlName="amount" type="number" min="1" [readOnly]="sharedOffering()" />
+          @if (errorFor('amount'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        <label>
+          Amount status
+          <select formControlName="paymentStatus">
+            @for (status of paymentStatuses; track status) {
+              <option [value]="status">{{ statusLabel(status) }}</option>
+            }
+          </select>
+        </label>
+        @if (form.controls.paymentStatus.value === 'Advance') {
+          <label>
+            Advance paid
+            <input formControlName="advance" type="number" min="1" />
+            @if (errorFor('advance'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+          <p class="balance">Balance amount to pay ₹ {{ balance().toLocaleString('en-IN') }}</p>
+        }
+        @if (form.controls.paymentStatus.value !== 'Unpaid') {
+          <label>
+            Payment
+            <select formControlName="payment">
+              <option value="">Select</option>
+              @for (mode of modes; track mode) {
+                <option [value]="mode">{{ mode }}</option>
+              }
+            </select>
+            @if (errorFor('payment'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+        }
+      </fieldset>
+    </div>
+
+    <div class="foot">
+      <button type="button" class="ghost" (click)="closeForm()">Cancel</button>
+      <button class="book" type="submit">Save booking</button>
+    </div>
+  </form>
+} @else if (confirmed(); as saved) {
+  <section class="sheet">
+    <div class="sheet-head">
+      <div>
+        <p class="eyebrow">Booking saved</p>
+        <h1>{{ saved.id }}</h1>
+      </div>
+      <button type="button" class="ghost" (click)="closeConfirmed()">Back to bookings</button>
+    </div>
+    <p class="print-note">
+      Vazhipadu slips for {{ saved.mobile }}. Every booking on this mobile number is included.
+    </p>
+    <dl class="confirm">
+      <div>
+        <dt>Devotee</dt>
+        <dd>{{ saved.devotee }}</dd>
+      </div>
+      <div>
+        <dt>Vazhipad</dt>
+        <dd>{{ saved.pooja }}</dd>
+      </div>
+      <div>
+        <dt>Amount</dt>
+        <dd>{{ saved.amount }}</dd>
+      </div>
+      <div>
+        <dt>Slips</dt>
+        <dd>{{ confirmedSlips().length }} vazhipadu {{ confirmedSlips().length === 1 ? 'slip' : 'slips' }}</dd>
+      </div>
+    </dl>
+    <div class="print-actions">
+      <button type="button" class="book" (click)="printAll()">Print all slips</button>
+      <button type="button" class="ghost" (click)="printByMember()">Print by member</button>
+      <button type="button" class="ghost" (click)="printByVazhipadu()">Print by vazhipadu</button>
+    </div>
+    @if (printError()) {
+      <p class="error">{{ printError() }}</p>
+    }
+    <ul class="slip-list">
+      @for (row of confirmedSlips(); track $index) {
+        <li>
+          <strong>{{ row.vazhipadu }}</strong>
+          <span>{{ row.member }}@if (row.star) { ({{ row.star }}) }</span>
+          @if (row.note) {
+            <span>{{ row.note }}</span>
+          }
+          <span>{{ formatMoney(row.amount) }}</span>
+          <span>{{ row.bookingId }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+} @else {
+  <section class="sheet">
+    <div class="sheet-head">
+      <div>
+        <p class="eyebrow">{{ counterText() }}</p>
+        <h1>Advance Pooja Bookings</h1>
+      </div>
+      <div class="head-actions">
+        <button type="button" class="book" (click)="openForm()">Book a pooja</button>
+        <button type="button" class="ghost" (click)="closed.emit()">Back</button>
+      </div>
+    </div>
+
+    <section class="day-pick" aria-label="Booking date">
+      <div class="day-nav">
+        <button type="button" class="ghost slim" (click)="shiftDay(-1)">Previous day</button>
+        <button type="button" class="ghost slim" [class.on]="selectedDay() === todayIso()" (click)="selectToday()">Today</button>
+        <button type="button" class="ghost slim" (click)="shiftDay(1)">Next day</button>
+      </div>
+      <label>
+        Date
+        <input type="date" [value]="selectedDay()" (change)="selectDay(asText($event))" />
+      </label>
+      <p class="day-total">
+        <strong>{{ dayTotal() }}</strong>
+        {{ dayTotal() === 1 ? 'booking' : 'bookings' }} on {{ dayTitle() }}
+      </p>
+    </section>
+
+    <div class="filters">
+      <label>
+        Search
+        <input
+          type="search"
+          placeholder="Devotee name or mobile"
+          [value]="query()"
+          (input)="setQuery(asText($event))"
+        />
+      </label>
+      <label>
+        Pooja
+        <select [value]="poojaFilter()" (change)="setPoojaFilter(asText($event))">
+          <option value="">All poojas</option>
+          @for (name of poojaChoices(); track name) {
+            <option [value]="name">{{ name }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Time slot
+        <select [value]="timeFilter()" (change)="setTimeFilter(asText($event))">
+          <option value="">All times</option>
+          @for (time of timeChoices(); track time) {
+            <option [value]="time">{{ time }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Payment status
+        <select [value]="statusFilter()" (change)="setStatusFilter(asText($event))">
+          <option value="">All statuses</option>
+          <option value="Paid">Paid</option>
+          <option value="Advance">Advance paid</option>
+          <option value="Unpaid">Unpaid</option>
+        </select>
+      </label>
+      <button type="button" class="ghost slim pending" [class.on]="pendingOnly()" (click)="togglePending()">
+        Pending balance@if (pendingCount()) { · {{ pendingCount() }} }
+      </button>
+      @if (filtersOn()) {
+        <button type="button" class="ghost slim" (click)="clearFilters()">Clear</button>
+      }
+    </div>
+
+    @if (dayRows().length) {
+      <div class="table-scroll">
+        <table class="summary">
+          <thead>
+            <tr>
+              <th>Sl.no.</th>
+              <th>Pooja name</th>
+              <th>Time slot</th>
+              <th>Number of devotees</th>
+              <th>Total pooja bookings</th>
+              <th>Total amount</th>
+              <th>Paid amount</th>
+              <th>Balance amount</th>
+              <th>View details</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of dayRows(); track row.name; let i = $index) {
+              <tr [class.open]="selectedPooja() === row.name">
+                <td>{{ i + 1 }}</td>
+                <td>
+                  <button type="button" class="name" (click)="openDetails(row.name)">{{ row.name }}</button>
+                </td>
+                <td>{{ row.slot }}</td>
+                <td>{{ row.devotees }}</td>
+                <td>{{ row.bookings }}</td>
+                <td>{{ formatMoney(row.total) }}</td>
+                <td>{{ formatMoney(row.paid) }}</td>
+                <td>{{ formatMoney(row.balance) }}</td>
+                <td>
+                  <button type="button" class="ghost slim" (click)="openDetails(row.name)">
+                    {{ selectedPooja() === row.name ? 'Hide details' : 'View details' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="empty">{{ filtersOn() ? 'No bookings match this search.' : 'No poojas are booked for this date.' }}</p>
+    }
+
+    @if (selectedPooja(); as pooja) {
+      <section class="record-table" [attr.aria-label]="pooja + ' bookings'">
+        <div class="record-head">
+          <h2>{{ pooja }} · {{ detailRows().length }} {{ detailRows().length === 1 ? 'booking' : 'bookings' }}</h2>
+          <button type="button" class="book slim" (click)="printList()">Print</button>
+        </div>
+        @if (printError()) {
+          <p class="error">{{ printError() }}</p>
+        }
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Booking id</th>
+                <th>Devotee name</th>
+                <th>Mobile number</th>
+                <th>Nakshathra</th>
+                <th>Pooja name</th>
+                <th>Time</th>
+                <th>Total amount</th>
+                <th>Advance paid</th>
+                <th>Balance amount</th>
+                <th>Payment method</th>
+                <th>Payment status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of detailRows(); track item.id) {
+                <tr>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.devotee }}</td>
+                  <td>{{ item.mobile }}</td>
+                  <td>{{ item.star || '—' }}</td>
+                  <td>{{ item.pooja }}</td>
+                  <td>{{ item.time }}</td>
+                  <td>{{ item.amount }}</td>
+                  <td>{{ advancePaid(item) }}</td>
+                  <td>{{ balanceDue(item) }}</td>
+                  <td>{{ item.payment }}</td>
+                  <td>
+                    <span [class]="item.paymentStatus.toLowerCase()">{{ statusLabel(item.paymentStatus) }}</span>
+                    @if (item.paymentStatus === 'Advance' || item.paymentStatus === 'Unpaid') {
+                      <button type="button" class="book slim" (click)="sendBalanceSms(item)">Send SMS for balance</button>
+                      @if (smsNote(); as note) {
+                        @if (note.id === item.id) {
+                          <p class="sms-note">{{ note.text }}</p>
+                        }
+                      }
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  </section>
+}

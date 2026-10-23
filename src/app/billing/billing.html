@@ -1,0 +1,418 @@
+@if (receipt(); as saved) {
+  <section class="sheet saved">
+    <p class="eyebrow">Bill saved</p>
+    <h1>{{ saved.bill }}</h1>
+    <p class="print-note">{{ saved.devotee }} · {{ saved.mode }} · {{ saved.amount }}</p>
+    <p class="print-note">One bill for each vazhipadu.</p>
+    @for (slip of saved.slips; track slip.label) {
+      <article class="vazhipadu-bill">
+        <header>
+          <h2>{{ slip.label }}</h2>
+          <strong>₹ {{ slip.total.toLocaleString('en-IN') }}</strong>
+        </header>
+        <ul>
+          @for (line of slip.lines; track $index) {
+            <li>
+              <span>{{ line.name }}{{ line.star ? ' · ' + line.star : '' }}</span>
+              <span>
+                @if (line.quantity > 1) {
+                  {{ line.quantity }} ×
+                }
+                ₹ {{ line.price.toLocaleString('en-IN') }}
+              </span>
+            </li>
+          }
+        </ul>
+      </article>
+    }
+    @if (printError()) {
+      <p class="error">{{ printError() }}</p>
+    }
+    <div class="actions">
+      <button type="button" class="ghost" (click)="closed.emit()">Back to dashboard</button>
+      <button type="button" class="save" (click)="printCart()">Print</button>
+      <button type="button" class="ghost" (click)="another()">New bill</button>
+    </div>
+  </section>
+} @else if (registering()) {
+  <form class="sheet" [formGroup]="registerForm" (ngSubmit)="saveRegister()" novalidate>
+    <div class="sheet-head">
+      <div>
+        <p class="eyebrow">{{ counterText() }}</p>
+        <h1>Register devotee</h1>
+      </div>
+      <button type="button" class="ghost" (click)="closeRegister()">Back</button>
+    </div>
+
+    <div class="columns">
+      <fieldset>
+        <legend>Devotee</legend>
+        <label>
+          Mobile
+          <input formControlName="mobile" type="tel" inputmode="numeric" placeholder="10-digit mobile" />
+          @if (registerError('mobile'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        <label>
+          Name
+          <input formControlName="name" type="text" placeholder="Devotee name" />
+          @if (registerError('name'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        <label>
+          Star
+          <select formControlName="star">
+            <option value="">Select</option>
+            @for (star of stars; track star) {
+              <option [value]="star">{{ star }}</option>
+            }
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset formArrayName="family">
+        <legend>Family members</legend>
+        @for (member of family.controls; track $index) {
+          <div class="member" [formGroupName]="$index">
+            <label>
+              Name
+              <input formControlName="name" type="text" placeholder="Name" />
+              @if (registerSubmitted() && member.controls.name.invalid) {
+                <span class="error">Enter the family member name.</span>
+              }
+            </label>
+            <label>
+              Relation
+              <select formControlName="relation">
+                <option value="">Select</option>
+                @for (relation of relations; track relation) {
+                  <option [value]="relation">{{ relation }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              Star
+              <select formControlName="star">
+                <option value="">Select</option>
+                @for (star of stars; track star) {
+                  <option [value]="star">{{ star }}</option>
+                }
+              </select>
+            </label>
+            <button type="button" class="ghost remove" (click)="removeMember($index)">Remove</button>
+          </div>
+        }
+        <button type="button" class="ghost add" (click)="addMember()">Add family member</button>
+      </fieldset>
+    </div>
+
+    <div class="foot">
+      <button type="button" class="ghost" (click)="closeRegister()">Cancel</button>
+      <button class="save" type="submit">Save registration</button>
+    </div>
+  </form>
+} @else {
+  <form class="sheet" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="sheet-head">
+      <div>
+        <p class="eyebrow">{{ counterText() }}</p>
+        <h1>New Billing</h1>
+      </div>
+      <button type="button" class="ghost" (click)="closed.emit()">Back</button>
+    </div>
+
+    <div class="columns">
+      <fieldset>
+        <legend>Devotee details</legend>
+        <label class="check">
+          <input type="checkbox" [checked]="walkIn()" (change)="setWalkIn(asChecked($event))" />
+          Walk-in devotee
+        </label>
+        <label>
+          Mobile
+          <input formControlName="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="10-digit mobile" />
+          @if (!walkIn() && errorFor('phone'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        @if (!walkIn() && household(); as record) {
+          <div class="household" role="listbox" aria-label="Registered members">
+            <p>Registered for this number</p>
+            <button type="button" (click)="choosePerson(record.name, record.star, record.name)">
+              <strong>{{ record.name }}</strong>
+              <span>{{ record.star || 'Star not set' }}</span>
+            </button>
+            @for (member of record.family; track member.name + member.relation) {
+              <button type="button" (click)="choosePerson(member.name, member.star || record.star, member.name)">
+                <strong>{{ member.name }}</strong>
+                <span>{{ member.relation }}{{ member.star ? ' · ' + member.star : '' }}</span>
+              </button>
+            }
+          </div>
+        } @else if (!walkIn() && lookupReady()) {
+          <p class="missing">No devotee is registered for this number.</p>
+        }
+        @if (!walkIn() && historyPhone().length === 10) {
+          <section class="history" aria-label="Vazhipadu history">
+            <p>Vazhipadu history</p>
+            @if (vazhipaduHistory().length) {
+              <ul>
+                @for (item of vazhipaduHistory(); track item.id) {
+                  <li>
+                    <strong>{{ item.pooja }}</strong>
+                    <span>{{ item.devotee }}{{ item.star ? ' · ' + item.star : '' }}</span>
+                    <span>{{ item.date }} · {{ item.detail }}</span>
+                  </li>
+                }
+              </ul>
+            } @else {
+              <p class="history-empty">No vazhipadu history for this number.</p>
+            }
+          </section>
+        }
+        <label>
+          Name
+          <input formControlName="devotee" type="text" autocomplete="name" placeholder="Devotee name" />
+          @if (errorFor('devotee'); as message) {
+            <span class="error">{{ message }}</span>
+          }
+        </label>
+        @if (!walkIn()) {
+          <button type="button" class="link" (click)="openRegister()">Register devotee</button>
+        } @else {
+          <div class="walk-ins">
+            @for (member of members(); track member.id) {
+              <div class="walk-row">
+                <label>
+                  Name
+                  <input
+                    type="text"
+                    [value]="member.name"
+                    placeholder="Person name"
+                    (input)="patchWalkIn(member.id, 'name', asText($event))"
+                  />
+                </label>
+                <label>
+                  Star
+                  <select (change)="patchWalkIn(member.id, 'star', asText($event))">
+                    <option value="" [selected]="!member.star">Select</option>
+                    @for (star of stars; track star) {
+                      <option [value]="star" [selected]="member.star === star">{{ star }}</option>
+                    }
+                  </select>
+                </label>
+                <button type="button" class="ghost slim" (click)="removeWalkIn(member.id)">Remove</button>
+              </div>
+            }
+            <button type="button" class="ghost add" (click)="addWalkInPerson()">Add person</button>
+          </div>
+        }
+        <div class="star-row">
+          <label>
+            Pooja
+            <select formControlName="pooja">
+              <option value="">Select</option>
+              @for (pooja of poojas; track pooja.id) {
+                <option [value]="pooja.id">{{ pooja.label }}{{ pooja.price ? ' · ₹ ' + pooja.price : '' }}</option>
+              }
+            </select>
+            @if (errorFor('pooja'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+          <button type="button" class="save" (click)="applyToAll()">Apply to all</button>
+        </div>
+        <div class="pair">
+          <label>
+            Price
+            <input formControlName="price" type="number" min="1" placeholder="₹" />
+            @if (errorFor('price'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+          <label>
+            Quantity
+            <input formControlName="quantity" type="number" min="1" [readOnly]="offeringCount() > 0" />
+            @if (errorFor('quantity'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+        </div>
+        @if (applyNote()) {
+          <p class="note">{{ applyNote() }}</p>
+        }
+      </fieldset>
+
+      <fieldset class="cart">
+        <legend>Bill</legend>
+        @if (namedMembers().length) {
+          @for (member of namedMembers(); track member.id) {
+            <article>
+              <header>
+                <strong>{{ member.name }}</strong>
+                @if (member.star) {
+                  <span>{{ member.star }}</span>
+                }
+              </header>
+              <ul>
+                @for (offering of member.offerings; track offering.poojaId) {
+                  <li>
+                    <span>{{ offering.label }}</span>
+                    <span>₹ {{ offering.price.toLocaleString('en-IN') }}</span>
+                  </li>
+                } @empty {
+                  <li class="quiet">No offerings yet</li>
+                }
+              </ul>
+              <p class="subtotal">
+                <span>Subtotal</span>
+                <strong>₹ {{ subtotal(member).toLocaleString('en-IN') }}</strong>
+              </p>
+            </article>
+          }
+        }
+        @if (!memberTotal()) {
+          <article>
+            <header><strong>{{ poojaLabel() || 'Pooja' }}</strong></header>
+            <ul>
+              <li>
+                <span>{{ form.controls.quantity.value }} × ₹ {{ form.controls.price.value || 0 }}</span>
+                <span>₹ {{ amount().toLocaleString('en-IN') }}</span>
+              </li>
+            </ul>
+          </article>
+        }
+        <p class="grand">
+          <span>Grand total</span>
+          <strong>₹ {{ amount().toLocaleString('en-IN') }}</strong>
+        </p>
+        <div class="pair">
+          <label>
+            Date
+            <input formControlName="date" type="date" />
+            @if (errorFor('date'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+          <label>
+            Payment
+            <select formControlName="payment">
+              <option value="">Select</option>
+              @for (mode of payments; track mode) {
+                <option [value]="mode">{{ mode }}</option>
+              }
+            </select>
+            @if (errorFor('payment'); as message) {
+              <span class="error">{{ message }}</span>
+            }
+          </label>
+        </div>
+        <label>
+          Remarks
+          <textarea formControlName="remarks" rows="2" placeholder="Optional note"></textarea>
+        </label>
+      </fieldset>
+    </div>
+
+    @if (namedMembers().length) {
+      <section class="people">
+        <h2>Members</h2>
+        @for (member of namedMembers(); track member.id) {
+          <article>
+            <header>
+              @if (editingMember(member.id); as draft) {
+                <div class="edit-row">
+                  <label>
+                    Name
+                    <input
+                      type="text"
+                      [value]="draft.name"
+                      (input)="patchMemberDraft('name', asText($event))"
+                    />
+                  </label>
+                  <label>
+                    Star
+                    <select (change)="patchMemberDraft('star', asText($event))">
+                      <option value="" [selected]="!draft.star">Select</option>
+                      @for (star of stars; track star) {
+                        <option [value]="star" [selected]="draft.star === star">{{ star }}</option>
+                      }
+                    </select>
+                  </label>
+                  @if (member.id !== 'head') {
+                    <label>
+                      Relation
+                      <select (change)="patchMemberDraft('relation', asText($event))">
+                        <option value="" [selected]="!draft.relation">Select</option>
+                        @for (relation of relations; track relation) {
+                          <option [value]="relation" [selected]="draft.relation === relation">{{ relation }}</option>
+                        }
+                      </select>
+                    </label>
+                  }
+                  <div class="edit-actions">
+                    <button type="button" class="save slim" (click)="saveMemberEdit()">Done</button>
+                    <button type="button" class="ghost slim" (click)="cancelMemberEdit()">Cancel</button>
+                  </div>
+                </div>
+                @if (memberDraftError()) {
+                  <span class="error">{{ memberDraftError() }}</span>
+                }
+              } @else {
+                <strong>{{ member.name }}</strong>
+                @if (member.star) {
+                  <span>{{ member.star }}</span>
+                }
+                @if (member.relation) {
+                  <span>{{ member.relation }}</span>
+                }
+                <button
+                  type="button"
+                  class="pencil"
+                  [attr.aria-label]="'Edit ' + member.name"
+                  (click)="beginMemberEdit(member)"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 20h4L18.5 9.5a2 2 0 0 0 0-2.8l-.2-.2a2 2 0 0 0-2.8 0L5 16.8V20Z" />
+                    <path d="M13.5 6.5l4 4" />
+                  </svg>
+                </button>
+              }
+            </header>
+            <div class="chips">
+              @for (offering of member.offerings; track offering.poojaId) {
+                <span>
+                  {{ offering.label }} ₹ {{ offering.price.toLocaleString('en-IN') }}
+                  <button type="button" (click)="removeOffering(member.id, offering.poojaId)">Remove</button>
+                </span>
+              } @empty {
+                <span class="waiting">No offerings yet</span>
+              }
+            </div>
+            <div class="extra">
+              <select [value]="extraChoice(member.id)" (change)="setExtra(member.id, asText($event))">
+                <option value="">Extra offering</option>
+                @for (pooja of poojas; track pooja.id) {
+                  @if (pooja.price > 0) {
+                    <option [value]="pooja.id">{{ pooja.label }} · ₹ {{ pooja.price }}</option>
+                  }
+                }
+              </select>
+              <button type="button" class="save slim" (click)="addOffering(member.id)">Add</button>
+            </div>
+          </article>
+        }
+      </section>
+    }
+
+    <div class="foot">
+      <p>
+        <span>Amount</span>
+        <strong>₹ {{ amount().toLocaleString('en-IN') }}</strong>
+      </p>
+      <button class="save" type="submit">Print</button>
+    </div>
+  </form>
+}

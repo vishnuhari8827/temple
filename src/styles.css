@@ -1,1 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --maroon: #6b1a2a;
+  --maroon-deep: #451018;
+  --mustard: #d6a31a;
+  --mustard-deep: #8d6808;
+  --ivory: #fbf6ea;
+  --paper: #fffdf8;
+  --sandal: #c6a36b;
+  --sandal-deep: #7d5a32;
+  --ink: #3f2918;
+  --line: #c6a36b;
+  --muted: #7d5a32;
+  --danger: #8f1d32;
+  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --malayalam: 'Noto Serif Malayalam', 'Nirmala UI', 'Kartika', serif;
+  --sans: 'Outfit', 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--ivory);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--mustard);
+  outline-offset: 2px;
+}

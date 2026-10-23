@@ -1,0 +1,133 @@
+<main class="screen">
+  <section class="story">
+    <div class="story-inner">
+      <p class="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M16 3c1 4 4 6 8 7-4 1-7 3-8 7-1-4-4-6-8-7 4-1 7-3 8-7Zm0 14c.6 2.2 2.2 3.4 4.4 4-2.2.6-3.8 1.8-4.4 4-.6-2.2-2.2-3.4-4.4-4 2.2-.6 3.8-1.8 4.4-4Z"
+          />
+        </svg>
+        <span lang="ml">ശ്രീ ഇണ്ടിളയപ്പൻ ക്ഷേത്രം,<br />അവനവൻചേരി</span>
+      </p>
+      <h1>Service to Devotee is Service to Divine</h1>
+      <p class="lede">Authorized Counter Billing &amp; Seva Management Portal</p>
+      <p class="clock">
+        <time [attr.datetime]="now().toISOString()">
+          <span class="clock-time">{{ clockTime() }}</span>
+          <span class="clock-date">{{ clockDate() }}</span>
+        </time>
+      </p>
+    </div>
+  </section>
+
+  <section class="form-wrap">
+    <form class="card" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <p class="eyebrow">Sign in</p>
+
+      <div class="field">
+        <label id="counter-label">Counter</label>
+        <div class="menu" (click)="$event.stopPropagation()">
+          <button
+            type="button"
+            class="menu-trigger"
+            [class.placeholder]="!form.controls.counter.value"
+            (click)="toggleMenu()"
+            [attr.aria-expanded]="menuOpen()"
+            aria-haspopup="listbox"
+            aria-labelledby="counter-label"
+            [attr.aria-invalid]="errorFor('counter') ? true : null"
+            [attr.aria-describedby]="errorFor('counter') ? 'counter-error' : null"
+          >
+            <span>{{ counterLabel() || 'Select' }}</span>
+            <svg viewBox="0 0 20 20" aria-hidden="true" [class.open]="menuOpen()">
+              <path
+                d="M5 7.5 10 12.5 15 7.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          @if (menuOpen()) {
+            <ul class="menu-list" role="listbox" aria-labelledby="counter-label">
+              @for (counter of counters; track counter.id) {
+                <li>
+                  <button
+                    type="button"
+                    role="option"
+                    [attr.aria-selected]="form.controls.counter.value === counter.id"
+                    (click)="chooseCounter(counter.id)"
+                  >
+                    {{ counter.label }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        @if (errorFor('counter'); as message) {
+          <p class="field-error" id="counter-error">{{ message }}</p>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <p class="banner" role="alert">{{ errorMessage() }}</p>
+      }
+
+      <div class="field">
+        <label for="staff-id">Staff ID</label>
+        <input
+          id="staff-id"
+          type="text"
+          formControlName="staffId"
+          autocomplete="username"
+          placeholder="Your staff ID"
+          [attr.aria-invalid]="errorFor('staffId') ? true : null"
+          [attr.aria-describedby]="errorFor('staffId') ? 'staff-id-error' : null"
+        />
+        @if (errorFor('staffId'); as message) {
+          <p class="field-error" id="staff-id-error">{{ message }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <div class="password">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="current-password"
+            placeholder="Your password"
+            [attr.aria-invalid]="errorFor('password') ? true : null"
+            [attr.aria-describedby]="errorFor('password') ? 'password-error' : null"
+          />
+          <button
+            type="button"
+            class="ghost"
+            (click)="togglePassword()"
+            [attr.aria-pressed]="showPassword()"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          >
+            {{ showPassword() ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        @if (errorFor('password'); as message) {
+          <p class="field-error" id="password-error">{{ message }}</p>
+        }
+      </div>
+
+      <label class="remember">
+        <input type="checkbox" formControlName="remember" />
+        Remember me on this device
+      </label>
+
+      <button class="submit" type="submit" [disabled]="submitting()">
+        {{ submitting() ? 'Signing in…' : 'Sign in' }}
+      </button>
+    </form>
+  </section>
+</main>
